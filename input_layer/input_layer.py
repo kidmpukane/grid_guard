@@ -15,16 +15,9 @@ def capture_diagnostic_request():
     # Build standardized GridCard request packet
     diagnostic_packet = {
         "directive": directive,
-        "asset_node": int(asset_node),
-        "sensor_node": f"Sensor_{int(sensor_node)}",
+        "asset_node": asset_node,
+        "sensor_node": f"S_{sensor_node}",
         "window_timestamp": window_timestamp,
     }
 
     return diagnostic_packet
-
-
-print(capture_diagnostic_request())
-
-# For testing: Display the structured request
-if __name__ == "__main__":
-    print(json.dumps(capture_diagnostic_request(), indent=4))
