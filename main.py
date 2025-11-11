@@ -9,8 +9,13 @@ user_intent = capture_diagnostic_request()
 fdir_module = SolarPanelFDIRModule()
 stage_1 = fdir_module.anomaly_detection(
     user_intent, telemetry, machine_profile, fault_mapping)
-print(stage_1)
+
 
 stage_2 = SolarPanelFDIRModule.diagnosis_and_classification(
     stage_1, solar_panel_fault_log, weather_api)
-print(stage_2)
+
+stage_3 = SolarPanelFDIRModule.root_cause_isolation(
+    user_intent, stage_1, stage_2
+)
+
+print(stage_3)

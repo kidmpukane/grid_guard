@@ -11,8 +11,8 @@ class SolarPanelFDIRModule:
 
         # 1. Fetch relevant values
         event_id = generate_event_id()
-        identified_metric = intent_classification["Identified_Metric"]
-        machine_type = intent_classification["Machine_Type"]
+        identified_metric = intent_classification["identified_metric"]
+        machine_type = intent_classification["machine_type"]
         # NOTE: Using machine_type to look up data source, assumed successful lookup
         measured_value = telemetry.get(
             machine_type, {}).get(identified_metric, None)
@@ -58,7 +58,7 @@ class SolarPanelFDIRModule:
         anomaly_report = {
             "event_id": event_id,
             "fdir_stage": "1_RealTime_Signal_Processor",
-            "asset_id": intent_classification["Asset_ID"],
+            "asset_id": intent_classification["asset_id"],
             "timestamp": "2025-11-06T14:45:33.210Z",  # Mock timestamp for structure
             "anomaly_status": anomaly_status,  # True/False
             "anomaly_verification": {
@@ -199,38 +199,73 @@ class SolarPanelFDIRModule:
             severity_label = "Critical"
 
         return {
-            "Asset_ID": asset_id,
+            "asset_id": asset_id,
 
-            "Isolated": isolated,
-            "Recurring": recurring,
-            "Persisting": persisting,
-            "Severity": severity,
+            "isolated": isolated,
+            "recurring": recurring,
+            "persisting": persisting,
+            "severity": severity,
 
-            "Fault_Context": {
-                "FDIR_Stage": "2_Historical_Contextualiser",
-                "Recurrence_Scan": {
-                    "Event_ID": event_id,
-                    "Metric_Analysed": anomaly_report["anomaly_verification"]["metric_analysed"],
-                    "Historical_Faults_Reviewed": historical_fault_count,
-                    "Similar_Anomalies_Found": similar_anomalies,
-                    "Temporal_Classification": classification,
-                    "Last_Occurrence_Timestamp": last_occurrence['timestamp'],
-                    "Average_Interval_Between_Events_hrs":
+            "fault_context": {
+                "fdir_stage": "2_Historical_Contextualiser",
+                "recurrence_scan": {
+                    "event_id": event_id,
+                    "metric_analysed": anomaly_report["anomaly_verification"]["metric_analysed"],
+                    "historical_faults_reviewed": historical_fault_count,
+                    "similar_anomalies_found": similar_anomalies,
+                    "temporal_classification": classification,
+                    "last_occurrence_timestamp": last_occurrence['timestamp'],
+                    "average_interval_between_events_hrs":
                         f"{average_interval_between_events_hrs:.2f} hours"
 
                 },
-                "Environmental_Validation": {
-                    "Irradiance_Level": irradiance,
-                    "Ambient_Temperature": ambient_temp,
-                    "Weather_Context": weather_context,
-                    "Environmental_Interference": environmental_interference,
-                    "Validation_Result": validation_result
+                "environmental_validation": {
+                    "irradiance_level": irradiance,
+                    "ambient_temperature": ambient_temp,
+                    "weather_context": weather_context,
+                    "environmental_interference": environmental_interference,
+                    "validation_result": validation_result
                 },
-                "Severity_Scoring": {
-                    "Impact_Factor": impact_factor,
-                    "Recurrence_Weight": recurrence_weight,
-                    "Final_Severity_Score": final_severity_score,
-                    "Severity_Label": severity_label
+                "severity_scoring": {
+                    "impact_factor": impact_factor,
+                    "recurrence_weight": recurrence_weight,
+                    "final_severity_score": final_severity_score,
+                    "severity_label": severity_label
                 }
+            }
+        }
+
+    def root_cause_isolation(intent, anomaly_report, diagnosis_report):
+        rt_confidence_score = 0.85  # placeholder
+        abs_deviation = ((
+            anomaly_report["anomaly_verification"]["deviation_percent"]) * 100) * 100
+        return {
+            "asset_id": anomaly_report["asset_id"],
+            "fdir_stage": "3_diagnostic_isolator",
+
+            "root_cause_diagnosis": {
+                "fdir_code": "PV-STRING-V-004",
+                "root_cause": diagnosis_report["fault_context"]["recurrence_scan"]["temporal_classification"],
+                "isolation_point": intent["sensor_node"],
+                "confidence_score": rt_confidence_score,
+
+                "fusion_analysis": {
+                    "real_time_deviation": {
+                        "measured_value": anomaly_report["anomaly_verification"]["measured_value"],
+                        "expected_value": anomaly_report["anomaly_verification"]["expected_value"],
+                        "deviation_absolute": abs_deviation,
+                        "deviation_percent": anomaly_report["anomaly_verification"]["deviation_percent"]
+                    },
+                    "historical_pattern": {
+                        "similar_anomalies_found": diagnosis_report["fault_context"]["recurrence_scan"]["similar_anomalies_found"],
+                        "temporal_classification": diagnosis_report["fault_context"]["recurrence_scan"]["temporal_classification"],
+                        "average_interval_between_events_hrs": diagnosis_report["fault_context"]["recurrence_scan"]["average_interval_between_events_hrs"]
+                    }
+                },
+
+                "diagnostic_rules_applied": [
+                    "IF Voltage_String < Dynamic_Baseline_Min AND Irradiance_Normal THEN Root_Cause = Module Degradation or Wiring Fault",
+                    "IF Similar_Anomalies_Recurrent THEN Confidence_Score += 0.05"
+                ]
             }
         }

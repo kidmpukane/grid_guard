@@ -17,13 +17,13 @@ def capture_diagnostic_request():
 
     # Build standardized GridCard request packet
     diagnostic_packet = {
-        "Asset_ID": asset_node,
-        "Machine_Type": machine_type,
-        "Sensor_Node": f"S_{sensor_node}",
-        "Prompt": directive,
-        "Classified_Intent": classified_intent,
-        "Identified_Metric": "Voltage_V",
-        "Time_Window_Hrs": window_timestamp,
+        "asset_id": asset_node,
+        "machine_type": machine_type,
+        "sensor_node": f"S_{sensor_node}",
+        "prompt": directive,
+        "classified_intent": classified_intent,
+        "identified_metric": "Voltage_V",
+        "time_window_hrs": window_timestamp,
     }
 
     return diagnostic_packet
