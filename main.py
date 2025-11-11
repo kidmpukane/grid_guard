@@ -19,3 +19,14 @@ stage_3 = SolarPanelFDIRModule.root_cause_isolation(
 )
 
 print(stage_3)
+
+
+def tool_recommendation():
+    return {
+        "Recommended_Tool": {
+            "Tool_Name": "TOOL_IV_CURVE_MODEL",
+            "Tool_Type": "Diagnostic",
+            "Execution_Priority": "High",
+            "Justification": "Tool can isolate string-level voltage anomalies using I-V curve analysis"
+        }
+    }

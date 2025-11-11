@@ -237,8 +237,9 @@ class SolarPanelFDIRModule:
 
     def root_cause_isolation(intent, anomaly_report, diagnosis_report):
         rt_confidence_score = 0.85  # placeholder
-        abs_deviation = ((
-            anomaly_report["anomaly_verification"]["deviation_percent"]) * 100)
+        measured_value = anomaly_report["anomaly_verification"]["measured_value"]
+        expected_value = anomaly_report["anomaly_verification"]["expected_value"]
+        abs_deviation = (measured_value - expected_value)
         return {
             "asset_id": anomaly_report["asset_id"],
             "fdir_stage": "3_diagnostic_isolator",
@@ -251,9 +252,9 @@ class SolarPanelFDIRModule:
 
                 "fusion_analysis": {
                     "real_time_deviation": {
-                        "measured_value": anomaly_report["anomaly_verification"]["measured_value"],
-                        "expected_value": anomaly_report["anomaly_verification"]["expected_value"],
-                        "deviation_absolute": abs_deviation,
+                        "measured_value": measured_value,
+                        "expected_value": expected_value,
+                        "deviation_absolute": round(abs_deviation, 2),
                         "deviation_percent": anomaly_report["anomaly_verification"]["deviation_percent"]
                     },
                     "historical_pattern": {
