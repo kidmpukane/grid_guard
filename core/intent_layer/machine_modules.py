@@ -238,7 +238,7 @@ class SolarPanelFDIRModule:
     def root_cause_isolation(intent, anomaly_report, diagnosis_report):
         rt_confidence_score = 0.85  # placeholder
         abs_deviation = ((
-            anomaly_report["anomaly_verification"]["deviation_percent"]) * 100) * 100
+            anomaly_report["anomaly_verification"]["deviation_percent"]) * 100)
         return {
             "asset_id": anomaly_report["asset_id"],
             "fdir_stage": "3_diagnostic_isolator",
