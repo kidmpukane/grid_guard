@@ -1,3 +1,4 @@
+from datetime import datetime
 from logging import error
 from dataclasses import dataclass
 from helpers.helper_functions import generate_event_id
@@ -73,3 +74,162 @@ class SolarPanelFDIRModule:
         }
 
         return anomaly_report
+
+    def diagnosis_and_classification(anomaly_report, solar_panel_fault_log, weather_api):
+        asset_id = anomaly_report["asset_id"]
+        current_fault = anomaly_report["anomaly_verification"]["fault_type"]
+        deviation_per = anomaly_report["anomaly_verification"]["deviation_percent"]
+        fault_count = 0
+        similar_faults = []
+        for fault in solar_panel_fault_log:
+            historical_faults = fault["fault_type"]
+            if current_fault == historical_faults:
+                fault_count += 1
+                similar_faults.append(fault)
+            else:
+                fault_count += 0
+        # --- TEMPORAL THRESHOLDS (30-Day Window) ---
+        ISOLATED_MAX = 2
+        RECURRING_MIN = 3
+        PERSISTENT_MIN = 10
+
+        isolated = fault_count <= ISOLATED_MAX
+
+        recurring = (fault_count >= RECURRING_MIN) and (
+            fault_count < PERSISTENT_MIN)
+        persisting = fault_count >= PERSISTENT_MIN
+
+        classification = ""
+        severity = ""
+
+        # The order of checks is critical here: check highest severity first.
+        if persisting == True:
+            # CRITICAL: 10 or more events
+            severity = "CRITICAL"
+            classification = "Persistent_Critical_Failure"
+        elif recurring == True:
+            # HIGH: 3 to 9 events
+            severity = "HIGH"
+            classification = "Re_occurring_Systemic_Fault"
+        else:
+            # WARNING: 1 or 2 events (The Isolated case)
+            severity = "WARNING"
+            classification = "Isolated_Transient_Fault"
+
+    # ------------------------------------------------------------------------:
+    # ---------------------- Historical_Faults_Context------------------------:
+    # ------------------------------------------------------------------------:
+
+        historical_fault_count = 0
+        for fault in solar_panel_fault_log:
+            if fault:
+                historical_fault_count += 1
+
+        similar_anomalies = fault_count
+
+        if similar_faults:
+            # Sort by timestamp to ensure chronological order
+            sorted_faults = sorted(
+                similar_faults, key=lambda x: x['timestamp'])
+
+            last_occurrence = sorted_faults[-1]
+
+        if len(similar_faults) > 1:
+            # Sort by timestamp to ensure chronological order
+            sorted_faults = sorted(
+                similar_faults, key=lambda x: x['timestamp'])
+
+            # Calculate intervals between consecutive events
+            intervals = []
+            for i in range(1, len(sorted_faults)):
+                prev_time = datetime.fromisoformat(
+                    sorted_faults[i - 1]['timestamp'].replace('Z', '+00:00'))
+                curr_time = datetime.fromisoformat(
+                    sorted_faults[i]['timestamp'].replace('Z', '+00:00'))
+
+                # Calculate difference in hours
+                interval_hours = (curr_time - prev_time).total_seconds() / 3600
+                intervals.append(interval_hours)
+
+            # Calculate average
+            average_interval_between_events_hrs = sum(
+                intervals) / len(intervals)
+
+    # -------------------------------------------------------------------------------:
+    # ---------------------- Environmental_Validation_Context------------------------:
+    # -------------------------------------------------------------------------------:
+
+        ambient_temp = weather_api["temperature"]
+        weather_context = weather_api["condition"]
+        irradiance = weather_api["solar_radiation"]
+
+        if irradiance < 200 or weather_context in ["Rain", "Heavy Cloud"]:
+            environmental_interference = True
+        else:
+            environmental_interference = False
+
+        # Validation_Result
+        if environmental_interference:
+            validation_result = "Environmental_Influence_Possible"
+        else:
+            validation_result = "Operational_Condition_Normal"
+
+        impact_factor = abs(deviation_per) / 100
+
+        # -------------------------------------------------------------------------------:
+        # ------------------------ Severity_Scoring_Context------------------------------:
+        # -------------------------------------------------------------------------------:
+
+        # Recurrence_Weight
+        recurrence_weight = fault_count / historical_fault_count
+
+        # Final_Severity_Score
+        final_severity_score = (impact_factor * 0.6) + \
+            (recurrence_weight * 0.4)
+
+        # Severity_Label
+        if final_severity_score < 0.3:
+            severity_label = "Low"
+        elif final_severity_score < 0.6:
+            severity_label = "Moderate"
+        elif final_severity_score < 0.8:
+            severity_label = "High"
+        else:
+            severity_label = "Critical"
+
+        return {
+            "Asset_ID": "PV_PANEL_ARRAY_09SP82312",
+
+            "Isolated": isolated,
+            "Recurring": recurring,
+            "Persisting": persisting,
+            "Severity": severity,
+
+            "Fault_Context": {
+                "FDIR_Stage": "2_Historical_Contextualiser",
+                "Recurrence_Scan": {
+                    "Event_ID": event_id,
+                    "Metric_Analysed": anomaly_report["anomaly_verification"]["metric_analysed"],
+                    "Historical_Faults_Reviewed": historical_fault_count,
+                    "Similar_Anomalies_Found": similar_anomalies,
+                    "Temporal_Classification": classification,
+                    "Last_Occurrence_Timestamp": last_occurrence['timestamp'],
+                    "Average_Interval_Between_Events_hrs":
+                        f"{average_interval_between_events_hrs:.2f} hours"
+
+                },
+                "Environmental_Validation": {
+                    "Irradiance_Level": irradiance,
+                    "Ambient_Temperature": ambient_temp,
+                    "Weather_Context": weather_context,
+                    "Environmental_Interference": environmental_interference,
+                    "Validation_Result": validation_result
+                },
+                "Severity_Scoring": {
+                    "Impact_Factor": impact_factor,
+                    "Recurrence_Weight": recurrence_weight,
+                    "Final_Severity_Score": final_severity_score,
+                    "Severity_Label": severity_label
+                }
+            }
+        }

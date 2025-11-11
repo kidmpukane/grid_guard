@@ -128,3 +128,111 @@ machine_profile = {
     "Voltage_V": 400.0,  # The expected/nominal reading (Dynamic Baseline)
     "Current_A": 9.2,
 }
+
+solar_panel_fault_log = [
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Low String Voltage",
+        "status": "RESOLVED_TEMPORARY",
+        "severity": "WARNING",
+        "timestamp": "2025-10-14T12:00:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Low String Voltage",
+        "status": "RESOLVED_TEMPORARY",
+        "severity": "WARNING",
+        "timestamp": "2025-10-21T11:30:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Low String Voltage",
+        "status": "RESOLVED_TEMPORARY",
+        "severity": "WARNING",
+        "timestamp": "2025-10-28T10:00:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Low String Voltage",
+        "status": "ACTIVE_PENDING_ACTION",
+        "severity": "WARNING",
+        "timestamp": "2025-11-03T09:00:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High String Voltage",
+        "status": "RESOLVED_AUTO",
+        "severity": "HIGH",
+        "timestamp": "2025-11-04T13:15:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High String Voltage",
+        "status": "RESOLVED_AUTO",
+        "severity": "HIGH",
+        "timestamp": "2025-11-05T14:30:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High String Voltage",
+        "status": "RESOLVED_TEMPORARY",
+        "severity": "HIGH",
+        "timestamp": "2025-11-07T10:45:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High String Voltage",
+        "status": "ACTIVE_PENDING_ACTION",
+        "severity": "HIGH",
+        "timestamp": "2025-11-09T09:20:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High Cell Temperature",
+        "status": "RESOLVED_AUTO",
+        "severity": "HIGH",
+        "timestamp": "2025-11-08T18:45:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "High Cell Temperature",
+        "status": "RESOLVED_AUTO",
+        "severity": "HIGH",
+        "timestamp": "2025-11-08T18:55:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Inverter Communication Loss",
+        "status": "RESOLVED_AUTO",
+        "severity": "CRITICAL",
+        "timestamp": "2025-11-09T14:20:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Ground Fault Detected",
+        "status": "ACTIVE_PENDING_ACTION",
+        "severity": "CRITICAL",
+        "timestamp": "2025-11-10T08:15:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Low Power Output",
+        "status": "RESOLVED_TEMPORARY",
+        "severity": "WARNING",
+        "timestamp": "2025-11-10T10:30:00Z"
+    },
+    {
+        "machine_id": "PV_PANEL_09SP823",
+        "fault_type": "Panel Shading Detected",
+        "status": "ACTIVE",
+        "severity": "LOW",
+        "timestamp": "2025-11-10T11:00:00Z"
+    }
+]
+
+weather_api = {
+    "temperature": 31,           # °C
+    # Could be: "Rain", "Heavy Cloud", "Clear Sky", etc.
+    "condition": "Clear Sky",
+    "solar_radiation": 780       # W/m² (irradiance level)
+}
