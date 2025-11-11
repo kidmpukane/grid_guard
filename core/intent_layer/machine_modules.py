@@ -77,6 +77,7 @@ class SolarPanelFDIRModule:
 
     def diagnosis_and_classification(anomaly_report, solar_panel_fault_log, weather_api):
         asset_id = anomaly_report["asset_id"]
+        event_id = anomaly_report["event_id"]
         current_fault = anomaly_report["anomaly_verification"]["fault_type"]
         deviation_per = anomaly_report["anomaly_verification"]["deviation_percent"]
         fault_count = 0
@@ -198,7 +199,7 @@ class SolarPanelFDIRModule:
             severity_label = "Critical"
 
         return {
-            "Asset_ID": "PV_PANEL_ARRAY_09SP82312",
+            "Asset_ID": asset_id,
 
             "Isolated": isolated,
             "Recurring": recurring,
