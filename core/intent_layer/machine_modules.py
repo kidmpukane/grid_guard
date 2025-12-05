@@ -75,7 +75,7 @@ class SolarPanelFDIRModule:
 
         return anomaly_report
 
-    def diagnosis_and_classification(anomaly_report, solar_panel_fault_log, weather_api):
+    def diagnosis_and_classification(self, anomaly_report, solar_panel_fault_log, weather_api):
         asset_id = anomaly_report["asset_id"]
         event_id = anomaly_report["event_id"]
         current_fault = anomaly_report["anomaly_verification"]["fault_type"]
@@ -235,7 +235,7 @@ class SolarPanelFDIRModule:
             }
         }
 
-    def root_cause_isolation(intent, anomaly_report, diagnosis_report):
+    def root_cause_isolation(self, intent, anomaly_report, diagnosis_report):
         rt_confidence_score = 0.85  # placeholder
         measured_value = anomaly_report["anomaly_verification"]["measured_value"]
         expected_value = anomaly_report["anomaly_verification"]["expected_value"]
