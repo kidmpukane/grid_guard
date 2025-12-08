@@ -5,7 +5,7 @@ from datetime import datetime
 def capture_diagnostic_request():
     """Captures and structures a predictive diagnostic command."""
     directive = input(
-        "🧭 Enter diagnostic directive (e.g., 'run vibration analysis'): ")
+        "🧭 Enter diagnostic directive (e.g., 'Check voltage on Solar Panel'): ")
     classified_intent = directive  # Placeholder for actual intent classification
     asset_node = input("🏗️ Enter Asset Node ID (Machine ID): ")
     machine_type = input(
