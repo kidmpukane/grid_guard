@@ -9,12 +9,12 @@ The system ingests a natural-language directive, interprets the intent, maps it 
 
 This project implements the **first working build**, containing:
 
-* Input Layer
-* Intent Classifier
-* Intent Layer / Machine Diagnostics
-* Machine Profile Loader
-* Core Diagnostic Execution
-* Complete FTIR trace-logging (every stage prints its reasoning)
+- Input Layer
+- Intent Classifier
+- Intent Layer / Machine Diagnostics
+- Machine Profile Loader
+- Core Diagnostic Execution
+- Complete FTIR trace-logging (every stage prints its reasoning)
 
 ---
 
@@ -61,7 +61,7 @@ The engine will then:
 2. Identify machine class & diagnostic module
 3. Load relevant machine profile from `/data/machines`
 4. Execute rule-based diagnostics
-5. Print FTIR trace logs
+5. Print FDIR trace logs
 6. Produce a final recommendation or warning
 
 ---
@@ -115,7 +115,7 @@ Performs minor cleaning, validation, and logs the raw intent.
 ### **2. Intent Classification**
 
 Classifies the instruction into diagnostic categories
-(e.g., *check voltage*, *inspect temperature*, *look up device status*).
+(e.g., _check voltage_, _inspect temperature_, _look up device status_).
 
 Uses simple rule-matching and mapping tables (expandable).
 
@@ -123,10 +123,10 @@ Uses simple rule-matching and mapping tables (expandable).
 
 Loads the correct machine profile and diagnostic rules based on:
 
-* Machine ID
-* Machine type
-* Sensor node
-* Instruction intent
+- Machine ID
+- Machine type
+- Sensor node
+- Instruction intent
 
 Executes FTIR logic.
 
@@ -135,10 +135,10 @@ Executes FTIR logic.
 Holds all machine profiles.
 Profiles define:
 
-* thresholds
-* normal operating ranges
-* fault signatures
-* recommended actions
+- thresholds
+- normal operating ranges
+- fault signatures
+- recommended actions
 
 This is the core of your domain knowledge base.
 
